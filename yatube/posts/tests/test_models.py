@@ -1,8 +1,7 @@
-# from tokenize import group
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from ..models import Group, Post
+from posts.models import Group, Post
 
 User = get_user_model()
 
@@ -11,14 +10,14 @@ class PostModelTest(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = User.objects.create_user(username='auth')
+        user = User.objects.create_user(username='auth')
         cls.group = Group.objects.create(
             title='Тестовая группа',
             slug='Тестовый слаг',
             description='Тестовое описание',
         )
         cls.post = Post.objects.create(
-            author=cls.user,
+            author=user,
             text='Тестовый пост',
         )
 
@@ -36,7 +35,6 @@ class PostModelTest(TestCase):
         """verbose_name полей text и group совпадают с ожидаемыми."""
         post = PostModelTest.post
 
-        # Получаем из свойста класса Post значение verbose_name для text
         text_verbose = post._meta.get_field('text').verbose_name
         self.assertEqual(text_verbose, 'Текст поста')
 
