@@ -27,8 +27,7 @@ class PostPagesTests(TestCase):
         cls.post = Post.objects.create(
             author=cls.user,
             text='Тестовый пост',
-            group=cls.group,
-            pk=1,
+            group=cls.group
         )
 
     def setUp(self):
