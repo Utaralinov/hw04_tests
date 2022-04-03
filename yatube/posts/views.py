@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import PostForm
-from .models import Group, Post, User
+from .forms import CommentForm, PostForm
+from .models import Comment, Group, Post, User
 from .utils import get_paginator
 
 
@@ -47,9 +47,12 @@ def profile(request, username):
 def post_detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     posts_count = Post.objects.filter(author=post.author).count()
+    comments = Comment.objects.filter(post=post)
     context = {
         'post': post,
-        'posts_count': posts_count
+        'posts_count': posts_count,
+        'form': CommentForm(),
+        'comments': comments
     }
     return render(request, 'posts/post_detail.html', context)
 
@@ -78,7 +81,12 @@ def post_edit(request, pid):
     if user != post.author:
         return redirect('posts:post_detail', post_id=pid)
 
-    form = PostForm(request.POST or None, instance=post)
+    form = PostForm(
+        request.POST or None,
+        files=request.FILES or None,
+        instance=post
+    )
+
     if form.is_valid():
         form.save()
         return redirect('posts:post_detail', post_id=pid)
@@ -89,3 +97,15 @@ def post_edit(request, pid):
     }
 
     return render(request, 'posts/create_post.html', context)
+
+
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    form = CommentForm(request.POST or None)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.author = request.user
+        comment.post = post
+        comment.save()
+    return redirect('posts:post_detail', post_id=post_id)
