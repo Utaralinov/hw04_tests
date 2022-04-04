@@ -1,5 +1,4 @@
 from core.models import CreatedModel
-
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -62,3 +61,16 @@ class Comment(CreatedModel):
         related_name='comments'
     )
     text = models.TextField('Добавить коментарий:')
+
+
+class Follow(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='follower'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='following'
+    )
