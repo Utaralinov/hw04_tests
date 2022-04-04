@@ -42,12 +42,12 @@ class TestPost:
             'Свойство `text` модели `Post` должно быть текстовым `TextField`'
         )
 
-        pub_date_field = search_field(model_fields, 'pub_date')
-        assert pub_date_field is not None, 'Добавьте дату и время проведения события `pub_date` модели `Post`'
-        assert type(pub_date_field) == fields.DateTimeField, (
-            'Свойство `pub_date` модели `Post` должно быть датой и время `DateTimeField`'
+        created_field = search_field(model_fields, 'created')
+        assert created_field is not None, 'Добавьте дату и время проведения события `created` модели `Post`'
+        assert type(created_field) == fields.DateTimeField, (
+            'Свойство `created` модели `Post` должно быть датой и время `DateTimeField`'
         )
-        assert pub_date_field.auto_now_add, 'Свойство `pub_date` модели `Post` должно быть `auto_now_add`'
+        assert created_field.auto_now_add, 'Свойство `created` модели `Post` должно быть `auto_now_add`'
 
         author_field = search_field(model_fields, 'author_id')
         assert author_field is not None, 'Добавьте пользователя, автор который создал событие `author` модели `Post`'
@@ -94,8 +94,8 @@ class TestPost:
         assert 'text' in admin_model.list_display, (
             'Добавьте `text` для отображения в списке модели административного сайта'
         )
-        assert 'pub_date' in admin_model.list_display, (
-            'Добавьте `pub_date` для отображения в списке модели административного сайта'
+        assert 'created' in admin_model.list_display, (
+            'Добавьте `created` для отображения в списке модели административного сайта'
         )
         assert 'author' in admin_model.list_display, (
             'Добавьте `author` для отображения в списке модели административного сайта'
@@ -105,8 +105,8 @@ class TestPost:
             'Добавьте `text` для поиска модели административного сайта'
         )
 
-        assert 'pub_date' in admin_model.list_filter, (
-            'Добавьте `pub_date` для фильтрации модели административного сайта'
+        assert 'created' in admin_model.list_filter, (
+            'Добавьте `created` для фильтрации модели административного сайта'
         )
 
         assert hasattr(admin_model, 'empty_value_display'), (

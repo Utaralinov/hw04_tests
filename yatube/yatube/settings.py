@@ -143,3 +143,11 @@ ALLOWED_HOSTS = ['127.0.0.1',
                  'localhost',
                  '[::1]',
                  'testserver']
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
+
+CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
