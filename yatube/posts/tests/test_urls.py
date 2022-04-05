@@ -34,11 +34,12 @@ class PostURLTests(TestCase):
     def test_unexisting_url(self):
         response = self.client.get('/unexisting_page/')
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+        self.assertTemplateUsed(response, 'core/404.html')
 
     def test_url_exist(self):
         urls = ['/',
                 f'/group/{self.group.slug}/',
-                f'/profile/{self.user.username}/',
+                # f'/profile/{self.user.username}/',
                 f'/posts/{self.post.pk}/']
 
         for url in urls:
@@ -77,6 +78,7 @@ class PostURLTests(TestCase):
             f'/posts/{self.post.pk}/edit/': 'posts/create_post.html',
             '/create/': 'posts/create_post.html',
         }
+
         for address, template in templates_url_names.items():
             with self.subTest(address=address):
                 response = self.authorized_client_author.get(address)

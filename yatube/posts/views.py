@@ -37,7 +37,10 @@ def profile(request, username):
     post_list = Post.objects.filter(author=profile)
     posts_count = post_list.count()
     page_number = request.GET.get('page')
-    following = Follow.objects.filter(user=request.user, author=profile).exists
+    following = False
+    if request.user.is_authenticated:
+        following = Follow.objects.filter(user=request.user,
+                                          author=profile).exists
     context = {
         'profile': profile,
         'page_obj': get_paginator(post_list, page_number),
