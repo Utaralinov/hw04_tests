@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
-from posts.models import Group, Post
+from posts.models import Comment, Group, Post
 
 User = get_user_model()
 
@@ -92,3 +92,32 @@ class PostFormTests(TestCase):
         self.assertRedirects(response, path)
         self.assertEqual(edited_post.text, form_data['text'])
         self.assertEqual(edited_post.group, self.group)
+
+
+class CommentFormTests(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user = User.objects.create(username='Author')
+        cls.post = Post.objects.create(
+            author=cls.user,
+            text='Тестовый пост'
+        )
+
+    def setUp(self):
+        self.authorized_client = Client()
+        self.authorized_client.force_login(self.user)
+
+    def test_add_comment(self):
+        comments_count = Comment.objects.count()
+        path = reverse('posts:add_comment', kwargs={'post_id': self.post.pk})
+        form_data = {
+            'text': 'Текст коментария'
+        }
+        response = self.authorized_client.post(path,
+                                               data=form_data,
+                                               follow=True)
+        redirect_path = reverse('posts:post_detail',
+                                kwargs={'post_id': self.post.pk})
+        self.assertRedirects(response, redirect_path)
+        self.assertEqual(Comment.objects.count(), comments_count + 1)

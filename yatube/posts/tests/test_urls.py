@@ -69,6 +69,12 @@ class PostURLTests(TestCase):
         self.assertRedirects(response,
                              f'/auth/login/?next=/posts/{self.post.pk}/edit/')
 
+    def test_comment_url_redirects_unauthorized_on_login(self):
+        path = f'/posts/{self.post.pk}/comment/'
+        response = self.client.post(path, data={}, follow=True)
+        redirect_path = f'/auth/login/?next=/posts/{self.post.pk}/comment/'
+        self.assertRedirects(response, redirect_path)
+
     def test_urls_uses_correct_template(self):
         templates_url_names = {
             '/': 'posts/index.html',
